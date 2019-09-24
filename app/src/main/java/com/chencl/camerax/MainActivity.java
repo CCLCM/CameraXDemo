@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -18,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageAnalysisConfig;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.Preview;
@@ -128,7 +132,23 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
                  });
              }
          });
-        CameraX.bindToLifecycle(this, preview, imageCapture);
+
+
+        HandlerThread luminosityAnalysis = new HandlerThread("LuminosityAnalysis");
+        luminosityAnalysis.start();
+        Handler imageAnalysisConfigHander = new Handler(luminosityAnalysis.getLooper());
+
+        ImageAnalysisConfig analysisConfig = new ImageAnalysisConfig.Builder()
+                .setCallbackHandler(imageAnalysisConfigHander)
+                .setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+                .build();
+
+
+        ImageAnalysis analyzerUseCase = new ImageAnalysis(analysisConfig);
+        analyzerUseCase.setAnalyzer(new  LuminosityAnalyzer());
+
+
+        CameraX.bindToLifecycle(this, preview, imageCapture,analyzerUseCase);
     }
 
 
