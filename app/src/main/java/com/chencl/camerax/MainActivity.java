@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageAnalysis;
@@ -116,14 +114,14 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
                          "${System.currentTimeMillis()}.jpg");
                  imageCapture.takePicture(file, new ImageCapture.OnImageSavedListener() {
                      @Override
-                     public void onImageSaved(@NonNull File file) {
+                     public void onImageSaved(File file) {
                          String msg = "Photo capture succeeded: ${file.absolutePath}";
                          Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                          Log.d("CameraXApp", msg);
                      }
 
                      @Override
-                     public void onError(@NonNull ImageCapture.ImageCaptureError imageCaptureError, @NonNull String message, @Nullable Throwable cause) {
+                     public void onError(ImageCapture.ImageCaptureError imageCaptureError, String message,Throwable cause) {
                          String msg = "Photo capture failed: $message";
                          Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                          Log.e("CameraXApp", msg);
@@ -184,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements LifecycleOwner {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,int[] grantResults) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 viewFinder.post(new Runnable() {
